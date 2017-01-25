@@ -36,7 +36,7 @@ router.post('/books', (req, res) => {
     });
     book.save((err) => {
         if (!err) {
-            return res.sendStatus(200);
+            return res.json(book);
         } else {
             return res.sendStatus(500);
         }

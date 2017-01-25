@@ -9,6 +9,7 @@ var LibraryView = Backbone.View.extend({
         this.collection.fetch({
             reset: true
         });
+        this.$booklist = this.$("#books-list");
         this.render();
         this.listenTo(this.collection, 'add', this.renderBook);
         this.listenTo(this.collection, 'reset', this.render);
@@ -33,9 +34,23 @@ var LibraryView = Backbone.View.extend({
                 }
             }
         });
-        console.log(formData);
+        // console.log(formData);
         // this.collection.add(new Book(formData));
-        this.collection.create(formData);
+        this.collection.create(formData,{
+            // 不去触发add事件，后期手动发送
+           silent:true,
+           wait:true,
+           success:function(model,resp,options){
+               console.log("create success");
+            //    console.log(data,resp);
+               options.collection.trigger("add",model);
+            //    
+           },
+           error:function(err){
+               console.log("Got error")
+           },
+           collection:this.collection
+        });
     },
     render: function () {
         this.collection.each(function (item) {
@@ -46,7 +61,7 @@ var LibraryView = Backbone.View.extend({
         var bookView = new BookView({
             model: item
         });
-        this.$el.append(bookView.render().el);
+        this.$booklist.append(bookView.render().el);
     }
 });
 
