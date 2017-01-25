@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>BookLibrary</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="css/main.css" rel="stylesheet">
+</head>
+
+<body>
+    <div id="books">
+        <form id="add-book" action="#">
+            <div>
+                <label for="coverImage">上传封面图片:</label>
+                <input type="file" name="" value="" id="cover-image">
+                <label for="title">标题：</label>
+                <input type="text" id="title" name="" value="">
+                <label for="author">作者：</label>
+                <input type="text" id="author" name="" value="">
+                <label for="keywords">关键词：</label>
+                <input type="text" id="keywords" name="" value="">
+                <button type="" id="add-book-button">添加</button>
+            </div>
+        </form>
+    </div>
+    <div id="books">
+    </div>
+    <script type="text/template" id="book-template">
+        <img src="<%= cover_image %>" class="coverImg" alt="图书封面">
+        <ul>
+            <li>
+                <%= title %>
+            </li>
+            <li>
+                <%= author %>
+            </li>
+            <li>
+                <%= keywords %>
+            </li>
+            <li><button type="" id="delete-book-button">删除</button></li>
+        </ul>
+    </script>
+    <script src=" ./node_modules/jquery/dist/jquery.js ">
+    </script>
+    <script src="./node_modules/underscore/underscore.js ">
+    </script>
+    <script src="./node_modules/backbone/backbone.js ">
+    </script>
+    <script src="./dist/app.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,58 @@
+body{
+    background-color: #eee;
+}
+.bookContainer{
+    outline: 1px solid #aaa;
+    width: 250px;
+    height: 320px;
+    background-color: #fff;
+    float: left;
+    margin: 5px;
+}
+.bookContainer img{
+   height: auto;
+   width:90%;
+   margin-top:5px; 
+}
+
+.bookContainer ul{
+    list-style-type: none;
+    margin-bottom: 0;
+}
+.bookContainer button{
+    margin-bottom: 0;
+}
+
+#add-book label{
+    width: 75px;
+    margin-right: 5px;
+    text-align: center;
+    /*line-height: px;*/
+}
+
+#add-book label，#add-book input{
+    display: block;
+    margin-bottom: 10px;
+    float: left;
+}
+
+#add-book button{
+    margin:5px 5px 5px 5px;
+}
+
+#add-book label[for="title"]{
+    clear: both;
+}
+
+#add-book div{
+    width: auto;
+}
+#add-book div::after{
+    content:"";
+    display: block;
+    height: 20px;
+    visibility: hidden;
+    clear: both;
+    font-size: 0;
+    line-height: 0;
+}
