@@ -5,6 +5,7 @@
     <title>BookLibrary</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="./node_modules/jquery-ui-dist/jquery-ui.css" rel="stylesheet">
     <link href="css/main.css" rel="stylesheet">
 </head>
 
@@ -12,12 +13,16 @@
     <div id="books">
         <form id="add-book" action="#">
             <div>
-                <label for="coverImage">上传封面图片:</label>
+                <label for="cover-image">上传封面图片:</label>
                 <input type="file" name="" value="" id="cover-image">
+                <label for="upload-file">上传图书:</label>
+                <input type="file" name="" value="" id="upload-file">
                 <label for="title">标题：</label>
                 <input type="text" id="title" name="" value="">
                 <label for="author">作者：</label>
                 <input type="text" id="author" name="" value="">
+                <label for="keywords">出版时间:</label>
+                <input type="text" id="release-date" name="" value="">
                 <label for="keywords">关键词：</label>
                 <input type="text" id="keywords" name="" value="">
                 <button type="" id="add-book-button">添加</button>
@@ -30,18 +35,27 @@
         <img src="<%= cover_image %>" class="coverImg" alt="图书封面">
         <ul>
             <li>
-                <%= title %>
+               <span>标题:<span> <%= title %>
             </li>
             <li>
-                <%= author %>
+               <span>作者:<span> <%= author %>
             </li>
             <li>
-                <%= keywords %>
+                <span>出版时间:<span><%= $.format.date(new Date(release_date),'yyyy-MM') %>
+            </li>
+            <li><span>关键词:<span>
+                <%  _.each(keywords,function(key){ %>
+                    <%=  '<span>'+key+'</span>' %>
+                <% }); %>
             </li>
             <li><button type="" id="delete-book-button">删除</button></li>
         </ul>
     </script>
     <script src=" ./node_modules/jquery/dist/jquery.js ">
+    </script>
+    <script src=" ./node_modules/jquery-ui-dist/jquery-ui.js ">
+    </script>
+    <script src=" ./node_modules/jquery-dateformat/dist/jquery-dateFormat.js ">
     </script>
     <script src="./node_modules/underscore/underscore.js ">
     </script>

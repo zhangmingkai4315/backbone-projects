@@ -1,5 +1,8 @@
 var Book = require("../models/Book");
 
-module.exports = Backbone.Collection.extend({
-    model: Book
+var Library = Backbone.Collection.extend({
+    model: Book,
+    url: '/api/books'
 });
+
+module.exports = Library;

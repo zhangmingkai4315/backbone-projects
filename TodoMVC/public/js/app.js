@@ -6,6 +6,5 @@ var todos = new TodoList();
 app.Todos = todos
 app.TodoRouter = new Router();
 Backbone.history.start();
-
 new AppView();
 // console.log(todos)
