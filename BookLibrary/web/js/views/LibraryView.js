@@ -1,5 +1,6 @@
 var BookView = require('./BookView');
 var Book = require('../models/Book');
+var BookDetailView = require('../views/BookDetailView');
 var Library = require('../collections/Library')
 var LibraryView = Backbone.View.extend({
     el: '#books',
@@ -10,9 +11,11 @@ var LibraryView = Backbone.View.extend({
             reset: true
         });
         this.$booklist = this.$("#books-list");
+        this.$bookdetail = this.$("#books-detail");
         this.render();
         this.listenTo(this.collection, 'add', this.renderBook);
         this.listenTo(this.collection, 'reset', this.render);
+        this.listenTo(this.collection, 'detail', this.renderDetail);
     },
     events: {
         'click #add-book-button': 'addBookHandler'
@@ -56,9 +59,23 @@ var LibraryView = Backbone.View.extend({
         });
     },
     render: function () {
+        app.collection = this.collection
         this.collection.each(function (item) {
             this.renderBook(item);
         }, this);
+    },
+
+    renderDetail: function (id) {
+        var item = app.collection.get(id)
+        if(typeof item === 'undefined'){
+            return
+        }else{
+           this.$booklist.hide()
+           var detail_element = new BookDetailView({
+               model:item
+           });
+           this.$bookdetail.append(detail_element.render().el); 
+        }
     },
     renderBook: function (item) {
         var bookView = new BookView({

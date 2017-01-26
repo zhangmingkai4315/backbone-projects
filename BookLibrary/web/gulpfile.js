@@ -30,4 +30,4 @@ gulp.task("watch",function () {
   gulp.watch('./js/**/*',['build','reload']);
   gulp.watch('./*.html',['reload']);
 });
-gulp.task('default',['connect','watch']);
+gulp.task('default',['connect','build','watch']);

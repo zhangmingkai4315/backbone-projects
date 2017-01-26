@@ -8,13 +8,17 @@ var Library = Backbone.Collection.extend({
 
 module.exports = Library;
 },{"../models/Book":3}],2:[function(require,module,exports){
-// global.app = app || {}
+window.app={}
 var LibraryView = require('./views/LibraryView');
 var util = require('./utils/utils');
+var AppRoute = require('./route/route');
 $(function(){
     console.log("debug")
     $('#release-date').datepicker();
-    new LibraryView(books);
+     new LibraryView(books);
+     app.appRoute = new AppRoute();
+     Backbone.history.start();
+
     $("#cover-image").change(function(){
         if(util.validateFile(this.files[0],10000000,/\.(jpg|png|gif)$/i)){
              util.uploadFile(this.files[0],{
@@ -53,7 +57,7 @@ $(function(){
         }
     });
 });
-},{"./utils/utils":4,"./views/LibraryView":6}],3:[function(require,module,exports){
+},{"./route/route":4,"./utils/utils":5,"./views/LibraryView":8}],3:[function(require,module,exports){
 var Book = Backbone.Model.extend({
     defaults: {
         'cover_image': 'img/placeholder.png',
@@ -69,6 +73,38 @@ var Book = Backbone.Model.extend({
 
 module.exports = Book;
 },{}],4:[function(require,module,exports){
+var BookDetailView = require('../views/BookDetailView');
+
+var AppRoute = Backbone.Router.extend({
+  routes:{
+
+    "help":"helpHandler",//#help
+    "books/:id":"detailHandler", //#books/:id
+    "search/:name":"searchHandler",
+    "tags":"showTagsHandler",
+   },
+   defaultHandler:function(){
+       window.app.collection.trigger('reset')
+   },
+   helpHandler:function(){
+       console.log("help page");
+   },
+   detailHandler:function(id){
+       window.app.collection.trigger('detail',id)
+   },
+   searchHandler:function(){
+       console.log("search page");
+   },
+   showTagsHandler:function(){
+        console.log("showTags page");
+   }
+}
+);
+
+module.exports=AppRoute;
+
+
+},{"../views/BookDetailView":6}],5:[function(require,module,exports){
 module.exports = {
     uploadFile: function (file,handler) {
         var formData = new FormData();
@@ -124,11 +160,11 @@ module.exports = {
         $('input#upload-file-path').val('');
     }
 }
-},{}],5:[function(require,module,exports){
-var BookView = Backbone.View.extend({
-    tagName:'div',
-    className:'bookContainer',
-    template:_.template($('#book-template').html()),
+},{}],6:[function(require,module,exports){
+var BookDetailView = Backbone.View.extend({
+    el: 'div',
+    className:'bookDetail',
+    template:_.template($('#book-detail-template').html()),
     events:{
         'click #delete-book-button':'deleteBookHandler',
     },
@@ -142,11 +178,24 @@ var BookView = Backbone.View.extend({
     }
 });
 
+module.exports = BookDetailView;
+},{}],7:[function(require,module,exports){
+var BookView = Backbone.View.extend({
+    tagName:'div',
+    className:'bookContainer',
+    template:_.template($('#book-template').html()),
+    render:function(){
+        this.$el.html(this.template(this.model.toJSON()));
+        return this;
+    }
+});
+
 module.exports = BookView;
 
-},{}],6:[function(require,module,exports){
+},{}],8:[function(require,module,exports){
 var BookView = require('./BookView');
 var Book = require('../models/Book');
+var BookDetailView = require('../views/BookDetailView');
 var Library = require('../collections/Library')
 var LibraryView = Backbone.View.extend({
     el: '#books',
@@ -157,9 +206,11 @@ var LibraryView = Backbone.View.extend({
             reset: true
         });
         this.$booklist = this.$("#books-list");
+        this.$bookdetail = this.$("#books-detail");
         this.render();
         this.listenTo(this.collection, 'add', this.renderBook);
         this.listenTo(this.collection, 'reset', this.render);
+        this.listenTo(this.collection, 'detail', this.renderDetail);
     },
     events: {
         'click #add-book-button': 'addBookHandler'
@@ -203,9 +254,23 @@ var LibraryView = Backbone.View.extend({
         });
     },
     render: function () {
+        app.collection = this.collection
         this.collection.each(function (item) {
             this.renderBook(item);
         }, this);
+    },
+
+    renderDetail: function (id) {
+        var item = app.collection.get(id)
+        if(typeof item === 'undefined'){
+            return
+        }else{
+           this.$booklist.hide()
+           var detail_element = new BookDetailView({
+               model:item
+           });
+           this.$bookdetail.append(detail_element.render().el); 
+        }
     },
     renderBook: function (item) {
         var bookView = new BookView({
@@ -216,4 +281,4 @@ var LibraryView = Backbone.View.extend({
 });
 
 module.exports = LibraryView;
-},{"../collections/Library":1,"../models/Book":3,"./BookView":5}]},{},[2])
+},{"../collections/Library":1,"../models/Book":3,"../views/BookDetailView":6,"./BookView":7}]},{},[2])

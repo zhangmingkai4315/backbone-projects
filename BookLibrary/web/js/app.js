@@ -1,10 +1,14 @@
-// global.app = app || {}
+window.app={}
 var LibraryView = require('./views/LibraryView');
 var util = require('./utils/utils');
+var AppRoute = require('./route/route');
 $(function(){
     console.log("debug")
     $('#release-date').datepicker();
-    new LibraryView(books);
+     new LibraryView(books);
+     app.appRoute = new AppRoute();
+     Backbone.history.start();
+
     $("#cover-image").change(function(){
         if(util.validateFile(this.files[0],10000000,/\.(jpg|png|gif)$/i)){
              util.uploadFile(this.files[0],{
