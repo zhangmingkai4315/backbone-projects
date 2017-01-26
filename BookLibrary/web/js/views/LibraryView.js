@@ -29,12 +29,15 @@ var LibraryView = Backbone.View.extend({
                     })
                 } else if (el.id === 'release-date') {
                     formData["release_date"] = $('#release-date').datepicker('getDate').getTime();
-                } else {
+                } else if(el.id==='cover-image-file-path'){
+                    formData['cover_image']=$(el).val()
+                } else if(el.id==='upload-file-path'){
+                    formData['upload_file_path']=$(el).val()
+                }else if(el.id==='title'||el.id==='author'){
                     formData[el.id] = $(el).val();
                 }
             }
         });
-        // console.log(formData);
         // this.collection.add(new Book(formData));
         this.collection.create(formData,{
             // 不去触发add事件，后期手动发送

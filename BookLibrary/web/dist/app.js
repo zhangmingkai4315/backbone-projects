@@ -10,13 +10,50 @@ module.exports = Library;
 },{"../models/Book":3}],2:[function(require,module,exports){
 // global.app = app || {}
 var LibraryView = require('./views/LibraryView');
-
+var util = require('./utils/utils');
 $(function(){
     console.log("debug")
     $('#release-date').datepicker();
     new LibraryView(books);
+    $("#cover-image").change(function(){
+        if(util.validateFile(this.files[0],10000000,/\.(jpg|png|gif)$/i)){
+             util.uploadFile(this.files[0],{
+                 success:function(data){
+                    var path = data[0].data.path;
+                    // console.log()
+                    util.update_coverimage(path);
+                 },
+                 error:function(data){
+                    var error = typeof data[0].data.error===null||"上传失败,请稍后重试";
+                    // console.log(data)
+                    util.update_coverimage_error(error);
+                 }
+             });
+        }else{
+            $('#cover-image-alert').removeClass().addClass('alert alert-danger').text('无法上传，格式或尺寸超出范围');
+        }
+    });
+
+    $("#upload-file").change(function(){
+        if(util.validateFile(this.files[0],3000000000,/\.(pdf|pptx|ppt|doc|docx|rar)$/i)){
+             util.uploadFile(this.files[0],{
+                 success:function(data){
+                    var path = data[0].data.path;
+                    // console.log()
+                    util.update_book_file_success(path);
+                 },
+                 error:function(data){
+                    var error = typeof data[0].data.error===null||"上传失败,请稍后重试";
+                    // console.log(data)
+                    util.update_book_file_error(error);
+                 }
+             });
+        }else{
+            $('#upload-file-alert').removeClass().addClass('alert alert-danger').text('无法上传，格式或尺寸超出范围');
+        }
+    });
 });
-},{"./views/LibraryView":5}],3:[function(require,module,exports){
+},{"./utils/utils":4,"./views/LibraryView":6}],3:[function(require,module,exports){
 var Book = Backbone.Model.extend({
     defaults: {
         'cover_image': 'img/placeholder.png',
@@ -32,6 +69,62 @@ var Book = Backbone.Model.extend({
 
 module.exports = Book;
 },{}],4:[function(require,module,exports){
+module.exports = {
+    uploadFile: function (file,handler) {
+        var formData = new FormData();
+        formData.append(
+            "files", file
+        );
+        $.ajax({
+            url: '/api/upload',
+            type: 'POST',
+            data: formData,
+            success: function () {
+                handler.success([].slice.call(arguments))
+            },
+            error: function () {
+                handler.error([].slice.call(arguments))
+            },
+            processData:false,
+            contentType:false,
+        })
+    },
+    validateFile: function (file, size, type) {
+        console.log(file)
+        var args = Array.prototype.slice.call(arguments);
+        var size = 0;
+        var type = /\.(jpg|png|gif)$/i
+        if (args.length === 3) {
+            size = args[1];
+            type = args[2];
+        } else if (args.length === 2) {
+            size = args[1];
+        } else {
+            return false;
+        }
+        return file.size < size && type.test(file.name)
+    },
+    update_coverimage:function(path){
+        $('#cover-image-alert').removeClass().addClass('alert alert-info').text("文件上传成功");
+        $('input#cover-image-file-path').val(path);
+        $('#show-cover-image').removeClass('hidden');
+        $('#show-cover-image img').attr("src", path);
+    },
+    update_coverimage_error:function(error){
+        $('#cover-image-alert').removeClass().addClass('alert alert-danger').text(error);
+        $('input#cover-image-file-path').val('');
+         $('#show-cover-image').addClass('hidden');
+    },
+    update_book_file_success:function(path){
+        $('#upload-file-alert').removeClass().addClass('alert alert-info').text("文件上传成功");
+        $('input#upload-file-path').val(path);
+    },
+    update_book_file_error:function(error){
+        $('#upload-file-alert').removeClass().addClass('alert alert-danger').text(error);
+        $('input#upload-file-path').val('');
+    }
+}
+},{}],5:[function(require,module,exports){
 var BookView = Backbone.View.extend({
     tagName:'div',
     className:'bookContainer',
@@ -51,7 +144,7 @@ var BookView = Backbone.View.extend({
 
 module.exports = BookView;
 
-},{}],5:[function(require,module,exports){
+},{}],6:[function(require,module,exports){
 var BookView = require('./BookView');
 var Book = require('../models/Book');
 var Library = require('../collections/Library')
@@ -83,12 +176,15 @@ var LibraryView = Backbone.View.extend({
                     })
                 } else if (el.id === 'release-date') {
                     formData["release_date"] = $('#release-date').datepicker('getDate').getTime();
-                } else {
+                } else if(el.id==='cover-image-file-path'){
+                    formData['cover_image']=$(el).val()
+                } else if(el.id==='upload-file-path'){
+                    formData['upload_file_path']=$(el).val()
+                }else if(el.id==='title'||el.id==='author'){
                     formData[el.id] = $(el).val();
                 }
             }
         });
-        // console.log(formData);
         // this.collection.add(new Book(formData));
         this.collection.create(formData,{
             // 不去触发add事件，后期手动发送
@@ -120,4 +216,4 @@ var LibraryView = Backbone.View.extend({
 });
 
 module.exports = LibraryView;
-},{"../collections/Library":1,"../models/Book":3,"./BookView":4}]},{},[2])
+},{"../collections/Library":1,"../models/Book":3,"./BookView":5}]},{},[2])

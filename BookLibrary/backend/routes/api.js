@@ -1,6 +1,9 @@
 const express = require('express');
 const router = express.Router();
+const fs = require("fs");
+const path = require("path");
 const BookModel = require("../model/book");
+const utils = require('../utils/utils');
 /* GET api port. */
 router.get('/', (req, res) => {
     res.send("This is a api server")
@@ -94,6 +97,22 @@ router.delete('/books/:id', (req, res) => {
     });
 });
 
-
+router.post("/upload",(req,res)=>{
+    if(req.files&&req.files.files){
+        var storeName=Date.now()+'__'+req.files.files.name;
+        var newPath = path.join(__dirname+"./../../web/img/uploads/"+storeName);
+        var data = req.files.files.data;
+        fs.writeFile(newPath,data,function(err){
+            if(err){ 
+                console.log(err)
+             return utils.send_json(res,null,err,500);
+            }
+            var storepath='/img/uploads/'+storeName;
+            return utils.send_json(res,{path:storepath},null,200);
+        });
+    }else{
+        return utils.send_json(res,null,'发送数据无法解析',400);
+    }
+});
 
 module.exports = router;

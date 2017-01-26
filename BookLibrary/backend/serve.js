@@ -3,6 +3,7 @@ const path = require('path');
 const logger = require('morgan');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
+const busboyBodyParser = require('busboy-body-parser');
 const mongoose = require('mongoose');
 mongoose.Promise = Promise;
 const application_root = __dirname
@@ -21,6 +22,8 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
     extended: false
 }));
+
+app.use(busboyBodyParser());
 app.use(cookieParser());
 app.use(express.static(public_path))
 

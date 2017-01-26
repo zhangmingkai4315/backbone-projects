@@ -20,12 +20,20 @@
                     <div class="form-group col-sm-4">
                         <label for="cover-image">上传封面图片:</label>
                         <input type="file" name="" value="" id="cover-image" class="form-control">
+                        <input type="text" class="hidden" id="cover-image-file-path" value='' />
+                        <div class="alert hidden" id="cover-image-alert" role="alert"></div>
+                    </div>
+                     <div class="form-group col-sm-4 hidden" id="show-cover-image">
+                         <label for="cover-image">封面图片展示</label>
+                         <img src="" class="coverImg img-responsive" alt="图书封面">
                     </div>
                 </div>
                 <div class="row">
                     <div class="form-group col-sm-4">
                         <label for="upload-file">上传图书:</label>
                         <input type="file" name="" value="" id="upload-file" class="form-control">
+                        <input type="text" class="hidden" id="upload-file-path" value='' />
+                        <div class="alert hidden" id="upload-file-alert" role="alert"></div>
                     </div>
                 </div>
                 <div class="row">
